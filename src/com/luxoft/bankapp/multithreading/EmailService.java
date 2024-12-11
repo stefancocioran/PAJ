@@ -23,18 +23,17 @@ public class EmailService {
 		if (instance == null) instance = new EmailService();
 		return instance;
 	}
+
 	public void sendNotificationEmail(Email email) {
+		if (!running) {
+			System.out.println("Cannot add email. EmailService is closed.");
+			return;
+		}
 		emailQueue.add(email);
 	}
 
 	private void sendEmail(Email email) {
 		System.out.println("Sending email to " + email.getTo() + " with message: " + email.getMessage());
-		try {
-			Thread.sleep(2000); // Simulate email sending delay
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
-		System.out.println("Email sent to " + email.getTo());
 	}
 
 	public void close() {
@@ -43,5 +42,9 @@ public class EmailService {
 		synchronized (emailQueue) {
 			emailQueue.notifyAll();
 		}
+	}
+
+	public Queue getEmailQueue() {
+		return emailQueue;
 	}
 }
